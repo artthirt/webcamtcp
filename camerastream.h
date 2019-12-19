@@ -29,6 +29,8 @@ public slots:
 	void onSendImage(const QImage& image);
 	void onTimeout();
 
+	void stateChanged(QCamera::State state);
+
 protected:
 	virtual void run();
 
@@ -42,7 +44,9 @@ private:
 	AVCodecContext *m_fmt = nullptr;
 	AVCodec *m_codec = nullptr;
 
-	void initContext();
+	bool m_isInitAV;
+
+	void initContext(int width, int height);
 };
 
 #endif // CAMERASTREAM_H
