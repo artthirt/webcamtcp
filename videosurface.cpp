@@ -36,18 +36,18 @@ bool VideoSurface::present(const QVideoFrame &frame)
 
 	QVideoFrame c_frame(frame);
 
+	bool r = c_frame.map(QAbstractVideoBuffer::ReadOnly);
+	Error e = error();
+
 	int w = frame.width();
 	int h = frame.height();
 	int fmt = frame.pixelFormat();
-
 	const uchar *bits = c_frame.bits();
-
 	int mb = c_frame.mappedBytes();
 	int pc = c_frame.planeCount();
-	int bpw = c_frame.bytesPerLine();
+	int bpw = frame.bytesPerLine();
 
 	int c = 4;
-
 	QImage::Format imageFormat = QImage::Format_ARGB32;
 	if(frame.pixelFormat() == QVideoFrame::Format_ARGB32 || frame.pixelFormat() == QVideoFrame::Format_RGB32
 			|| frame.pixelFormat() == QVideoFrame::Format_BGRA32 || frame.pixelFormat() == QVideoFrame::Format_BGR32){
@@ -59,12 +59,13 @@ bool VideoSurface::present(const QVideoFrame &frame)
 	}
 
 	QImage image(
-				c_frame.bits(),
-				w, h,
-				c_frame.bytesPerLine(),
-				imageFormat);
+			c_frame.bits(),
+			w,
+			h,
+			c_frame.bytesPerLine(),
+			imageFormat);
 
-	emit sendImage(image);
+	emit sendImage(image.mirrored(true, true));
 
 	return true;
 }

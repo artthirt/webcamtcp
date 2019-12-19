@@ -16,8 +16,6 @@ tcpserver::~tcpserver()
 {
 	quit();
 	wait();
-
-	delete m_tcpserver;
 }
 
 void tcpserver::setOwner(QObject *owner)
@@ -101,4 +99,6 @@ void tcpserver::run()
 		it->abort();
 	}
 	m_tcpserver->close();
+
+	delete m_tcpserver;
 }
