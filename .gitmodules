@@ -1,0 +1,3 @@
+[submodule "ffmpeg"]
+	path = ffmpeg
+	url = https://artthirt@github.com/artthirt/ffmpeg_win.git

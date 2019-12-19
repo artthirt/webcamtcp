@@ -6,10 +6,12 @@ CONFIG += c++11 console
 CONFIG -= app_bundle
 
 SOURCES += \
+        camerastream.cpp \
         main.cpp \
         tcpserver.cpp \
         tcpsocket.cpp \
-        testsender.cpp
+        testsender.cpp \
+        videosurface.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -17,7 +19,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    camerastream.h \
     common.h \
     tcpserver.h \
     tcpsocket.h \
-    testsender.h
+    testsender.h \
+    videosurface.h
+
+include(ffmpeg/ffmpeg.pri)
