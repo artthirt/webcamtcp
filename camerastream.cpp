@@ -70,6 +70,7 @@ void CameraStream::stateChanged(QCamera::State state)
 
 void CameraStream::run()
 {
+	//initContext(640, 480);
 	initCamera();
 
 	m_timer.reset(new QTimer);
@@ -113,6 +114,7 @@ void CameraStream::initContext(int width, int height)
 	m_fmt->time_base = {1, 25};
 	m_fmt->gop_size = 25;
 	m_fmt->keyint_min = 2;
+	m_fmt->pix_fmt = AV_PIX_FMT_YUV420P;
 
 	m_fmt->width = width;
 	m_fmt->height = height;
