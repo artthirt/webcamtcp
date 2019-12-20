@@ -105,7 +105,7 @@ void CameraStream::initContext(int width, int height)
 	m_fmt->codec_id = m_codec->id;
 	m_fmt->bit_rate = 10000000;
 	m_fmt->flags = AV_CODEC_FLAG_GLOBAL_HEADER;
-	m_fmt->time_base = (AVRational){1, 25};
+	m_fmt->time_base = {1, 25};
 	m_fmt->gop_size = 25;
 	m_fmt->keyint_min = 2;
 

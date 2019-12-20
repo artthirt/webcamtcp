@@ -7,6 +7,8 @@
 #include <QTimer>
 #include "videosurface.h"
 
+#include <memory>
+
 extern "C"{
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
