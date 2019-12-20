@@ -8,9 +8,9 @@ void cnvrgb2yuv(QRgb rgb, uchar &y, uchar &u, uchar &v)
     int U = -43 * r - 84 * g + 127 * b;
     int V = 127 * r - 106  *g - 21 * b;
 
-    y = Y;
-    u = U + 128;
-    v = V + 128;
+    y = (Y + 128) >> 8;
+    u = (U + 128) >> 8;
+    v = (V + 128) >> 8;
 }
 
 void YUVImage::createFromQImage(const QImage &image)
@@ -50,14 +50,15 @@ void YUVImage::createFromQImage(const QImage &image)
 
             cnvrgb2yuv(rgb00, y, u, v);
             py0[2 * j + 0] = y;
-            pu[j] = u;
-            pv[j] = v;
             cnvrgb2yuv(rgb01, y, u, v);
             py0[2 * j + 1] = y;
             cnvrgb2yuv(rgb10, y, u, v);
             py1[2 * j + 0] = y;
             cnvrgb2yuv(rgb11, y, u, v);
             py1[2 * j + 1] = y;
+
+            pu[j] = u;
+            pv[j] = v;
         }
     }
 }

@@ -97,7 +97,7 @@ void CameraStream::run()
 
 	m_timer.reset(new QTimer);
 	connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(onTimeout()));
-	m_timer->start(200);
+    m_timer->start(40);
 
 	exec();
 
