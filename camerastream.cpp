@@ -184,24 +184,22 @@ void CameraStream::encodeFrame(const QImage &image)
     frame->width = image.width();
     frame->height = image.height();
     frame->format = AV_PIX_FMT_YUV420P;
-    frame->pict_type = AV_PICTURE_TYPE_I;
+
+    int res = av_frame_get_buffer(frame, 32);
+
+    if(res < 0){
+        av_frame_free(&frame);
+        return;
+    }
 
     YUVImage im;
     im.createFromQImage(image);
-
-    frame->linesize[0] = im.Y.size();
-    frame->linesize[1] = im.U.size();
-    frame->linesize[2] = im.V.size();
-
-    frame->data[0] = (uint8_t*)av_malloc(im.Y.size());
-    frame->data[1] = (uint8_t*)av_malloc(im.U.size());
-    frame->data[2] = (uint8_t*)av_malloc(im.V.size());
 
     std::copy_n(im.Y.data(), im.Y.size(), frame->data[0]);
     std::copy_n(im.U.data(), im.U.size(), frame->data[1]);
     std::copy_n(im.V.data(), im.V.size(), frame->data[2]);
 
-    int res = 0;
+    res = 0;
     do{
         res = avcodec_send_frame(m_fmt, frame);
     }while(res == AVERROR(EAGAIN));
