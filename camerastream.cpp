@@ -137,7 +137,7 @@ void CameraStream::initContext(int width, int height)
 //	m_fmt->bit_rate = 10000000;
 //    m_fmt->flags2 |= AV_CODEC_FLAG2_FAST;
     m_fmt->time_base = {1, 60};
-    m_fmt->gop_size = 5;
+    m_fmt->gop_size = 3;
     m_fmt->keyint_min = 1;
     m_fmt->framerate = {60, 1};
     m_fmt->ticks_per_frame = 2;
@@ -148,7 +148,7 @@ void CameraStream::initContext(int width, int height)
 
 	AVDictionary *dict = nullptr;
 	av_dict_set(&dict, "b", "10M", 0);
-    av_dict_set(&dict, "buffer_size", "5", 0);
+    av_dict_set(&dict, "pkt_size", "5", 0);
     //av_dict_set(&dict, "r", "25", 0);
 	av_dict_set(&dict, "c", "v", 0);
     //av_dict_set(&dict, "scale", QString("%1:%2").arg(width).arg(height).toLatin1().data(), 0);

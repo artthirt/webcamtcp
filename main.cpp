@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
 	av_register_all();
 	avcodec_register_all();
-    av_log_set_level(AV_LOG_TRACE);
+    //av_log_set_level(AV_LOG_TRACE);
 
 	QCoreApplication a(argc, argv);
 
