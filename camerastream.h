@@ -5,9 +5,11 @@
 #include <QThread>
 #include <QCamera>
 #include <QTimer>
+#include <queue>
 #include "videosurface.h"
 
 #include <memory>
+#include <thread>
 
 extern "C"{
 #include <libavcodec/avcodec.h>
@@ -24,11 +26,11 @@ public:
 	bool initCamera();
 
 signals:
-	void sendPacket(QByteArray);
+    void sendPacket(QByteArray);
 
 public slots:
-	void imageCaptured(int id, const QImage &preview);
-	void onSendImage(const QImage& image);
+    void imageCaptured(int id, const QImage &preview);
+    void onSendImage(const QImage& image);
 	void onTimeout();
 
 	void stateChanged(QCamera::State state);
@@ -43,12 +45,20 @@ private:
 	uint m_numImage;
 	QSize m_imageSize;
 
+    uint m_max_frames = 25;
+    std::queue< QImage > m_frames;
+
 	AVCodecContext *m_fmt = nullptr;
 	AVCodec *m_codec = nullptr;
 
 	bool m_isInitAV;
 
 	void initContext(int width, int height);
+
+    bool m_done = false;
+    std::shared_ptr< std::thread > m_encoderThread;
+    void doEncode();
+    void encodeFrame(const QImage& image);
 };
 
 #endif // CAMERASTREAM_H

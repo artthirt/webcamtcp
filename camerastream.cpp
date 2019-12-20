@@ -3,6 +3,8 @@
 #include <QList>
 #include <QCameraInfo>
 
+#include <chrono>
+
 CameraStream::CameraStream(QObject *parent) : QThread(parent)
 {
 	m_camera = nullptr;
@@ -13,6 +15,12 @@ CameraStream::CameraStream(QObject *parent) : QThread(parent)
 
 CameraStream::~CameraStream()
 {
+    m_done = true;
+
+    if(m_encoderThread.get()){
+        m_encoderThread->join();
+    }
+
 	quit();
 	wait();
 }
@@ -49,6 +57,12 @@ void CameraStream::onSendImage(const QImage &image)
 {
 	m_imageSize = image.size();
 	m_numImage++;
+
+    if(m_fmt){
+        if(m_frames.size() < m_max_frames){
+            m_frames.push(image);
+        }
+    }
 }
 
 void CameraStream::onTimeout()
@@ -137,5 +151,47 @@ void CameraStream::initContext(int width, int height)
 		avcodec_free_context(&m_fmt);
 		m_codec = nullptr;
 		return;
-	}
+    }
+
+    m_encoderThread.reset(new std::thread(std::bind(&CameraStream::doEncode, this)));
 }
+
+void CameraStream::doEncode()
+{
+    while(!m_done){
+        if(m_frames.empty()){
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        }else{
+            QImage im = m_frames.front();
+            m_frames.pop();
+            encodeFrame(im);
+        }
+    }
+}
+
+void CameraStream::encodeFrame(const QImage &image)
+{
+    AVFrame *frame = av_frame_alloc();
+
+    int res = 0;
+    do{
+        res = avcodec_send_frame(m_fmt, frame);
+    }while(res == AVERROR(EAGAIN));
+
+    AVPacket pkt;
+    std::fill((char*)&pkt, (char*)&pkt + sizeof(AVPacket), 0);
+
+    QByteArray data;
+
+    while(avcodec_receive_packet(m_fmt, &pkt) >= 0){
+
+        data.resize(pkt.size);
+        std::copy(pkt.data, pkt.data + pkt.size, data.data());
+        emit sendPacket(data);
+
+        av_packet_unref(&pkt);
+    }
+
+    av_frame_free(&frame);
+}
+
