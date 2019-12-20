@@ -26,8 +26,8 @@ HEADERS += \
     testsender.h \
     videosurface.h
 
-!win32{
-    LIBS += -lx264
-}
+#!win32{
+#    LIBS += -lx264
+#}
 
 include(ffmpeg/ffmpeg.pri)
