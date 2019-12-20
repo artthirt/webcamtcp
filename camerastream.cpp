@@ -184,6 +184,7 @@ void CameraStream::encodeFrame(const QImage &image)
     frame->width = image.width();
     frame->height = image.height();
     frame->format = AV_PIX_FMT_YUV420P;
+    frame->pts = m_numFrame+=200;
 
     int res = av_frame_get_buffer(frame, 32);
 

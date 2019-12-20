@@ -76,6 +76,7 @@ void tcpsocket::setSocket(QTcpSocket *sock)
 	printf("new connect %s\r", sock->peerAddress().toString().toLatin1().data());
 
 	m_isConnected = true;
+    start();
 }
 
 void tcpsocket::setOwner(QObject *owner)

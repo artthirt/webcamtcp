@@ -49,6 +49,7 @@ private:
     uint m_max_frames = 25;
     std::queue< QImage > m_frames;
 
+    int64_t m_numFrame = 0;
 	AVCodecContext *m_fmt = nullptr;
 	AVCodec *m_codec = nullptr;
 
