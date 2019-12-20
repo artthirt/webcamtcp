@@ -24,9 +24,7 @@ enum{
 
 bool check_string(char* data, char* string, int len)
 {
-	int i = 0;
-	while(i++ < len && *data++ == *string++){}
-	return i == len + 1;
+    return strncmp(data, string, len) == 0;
 }
 
 tcpsocket::tcpsocket(QObject *parent) : QThread(parent)
