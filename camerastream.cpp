@@ -97,7 +97,7 @@ void CameraStream::run()
 
 	m_timer.reset(new QTimer);
 	connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(onTimeout()));
-    m_timer->start(40);
+    m_timer->start(100);
 
 	exec();
 
@@ -135,11 +135,11 @@ void CameraStream::initContext(int width, int height)
 //	m_fmt->codec_type = AVMEDIA_TYPE_VIDEO;
 //	m_fmt->codec_id = m_codec->id;
 //	m_fmt->bit_rate = 10000000;
-//	m_fmt->flags = AV_CODEC_FLAG_GLOBAL_HEADER;
-    m_fmt->time_base = {1, 25};
-    m_fmt->gop_size = 25;
-    m_fmt->keyint_min = 2;
-    m_fmt->framerate = {25, 1};
+//    m_fmt->flags2 |= AV_CODEC_FLAG2_FAST;
+    m_fmt->time_base = {1, 60};
+    m_fmt->gop_size = 5;
+    m_fmt->keyint_min = 1;
+    m_fmt->framerate = {60, 1};
     m_fmt->ticks_per_frame = 2;
     m_fmt->pix_fmt = AV_PIX_FMT_YUV420P;
 
@@ -148,7 +148,8 @@ void CameraStream::initContext(int width, int height)
 
 	AVDictionary *dict = nullptr;
 	av_dict_set(&dict, "b", "10M", 0);
-	av_dict_set(&dict, "r", "25", 0);
+    av_dict_set(&dict, "buffer_size", "5", 0);
+    //av_dict_set(&dict, "r", "25", 0);
 	av_dict_set(&dict, "c", "v", 0);
     //av_dict_set(&dict, "scale", QString("%1:%2").arg(width).arg(height).toLatin1().data(), 0);
 	int res = 0;
@@ -184,7 +185,7 @@ void CameraStream::encodeFrame(const QImage &image)
     frame->width = image.width();
     frame->height = image.height();
     frame->format = AV_PIX_FMT_YUV420P;
-    frame->pts = m_numFrame+=200;
+    frame->pts = m_numFrame += 1000;
 
     int res = av_frame_get_buffer(frame, 32);
 

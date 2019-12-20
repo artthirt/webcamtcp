@@ -65,8 +65,9 @@ void tcpsocket::setSocket(QTcpSocket *sock)
 {
 	m_socket = sock;
 
-	int buf = 7 * 1024 * 1024;
+    int buf = 300 * 1024;
 	setsockopt(m_socket->socketDescriptor(), SOL_SOCKET, SO_RCVBUF, (char*)&buf, sizeof(buf));
+    setsockopt(m_socket->socketDescriptor(), SOL_SOCKET, SO_SNDBUF, (char*)&buf, sizeof(buf));
 
 	connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
 	connect(m_socket, SIGNAL(connected()), this, SLOT(onConnect()));
@@ -75,8 +76,8 @@ void tcpsocket::setSocket(QTcpSocket *sock)
 
 	printf("new connect %s\r", sock->peerAddress().toString().toLatin1().data());
 
-	m_isConnected = true;
     start();
+    m_isConnected = true;
 }
 
 void tcpsocket::setOwner(QObject *owner)

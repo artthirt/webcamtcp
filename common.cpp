@@ -1,16 +1,23 @@
 
 #include "common.h"
 
+inline int clip(int val)
+{
+    if(val < 0) return 0;
+    if(val > 255) return 255;
+    return val;
+}
+
 void cnvrgb2yuv(QRgb rgb, uchar &y, uchar &u, uchar &v)
 {
     int r = qRed(rgb), g = qGreen(rgb), b = qBlue(rgb);
-    int Y = 77 * r + 150 * g + 29 * b;
-    int U = -43 * r - 84 * g + 127 * b;
-    int V = 127 * r - 106  *g - 21 * b;
+    int Y = 66 * r + 129 * g + 25 * b;
+    int U = -38 * r - 74 * g + 112 * b;
+    int V = 112 * r - 94  *g - 18 * b;
 
-    y = (Y + 128) >> 8;
-    u = (U + 128) >> 8;
-    v = (V + 128) >> 8;
+    y = ((Y + 128) >> 8) + 16;
+    u = ((U + 128) >> 8) + 128;
+    v = ((V + 128) >> 8) + 128;
 }
 
 void YUVImage::createFromQImage(const QImage &image)
@@ -29,7 +36,7 @@ void YUVImage::createFromQImage(const QImage &image)
     U.resize(lU);
     V.resize(lV);
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for(int i = 0; i < image.height()/2; ++i){
         QRgb* sc0 = (QRgb*)image.scanLine(i * 2 + 0);
         QRgb* sc1 = (QRgb*)image.scanLine(i * 2 + 1);

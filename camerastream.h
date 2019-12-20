@@ -46,7 +46,7 @@ private:
 	QSize m_imageSize;
     QImage m_image;
 
-    uint m_max_frames = 25;
+    uint m_max_frames = 5;
     std::queue< QImage > m_frames;
 
     int64_t m_numFrame = 0;
