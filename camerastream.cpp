@@ -5,6 +5,8 @@
 
 #include <chrono>
 
+#include "common.h"
+
 CameraStream::CameraStream(QObject *parent) : QThread(parent)
 {
 	m_camera = nullptr;
@@ -55,6 +57,9 @@ void CameraStream::imageCaptured(int id, const QImage &preview)
 
 void CameraStream::onSendImage(const QImage &image)
 {
+    if(image.isNull())
+        return;
+
 	m_imageSize = image.size();
 	m_numImage++;
 
@@ -74,6 +79,7 @@ void CameraStream::onTimeout()
 			m_isInitAV = true;
 		}
 	}
+    onSendImage(m_image);
 }
 
 void CameraStream::stateChanged(QCamera::State state)
@@ -84,6 +90,8 @@ void CameraStream::stateChanged(QCamera::State state)
 
 void CameraStream::run()
 {
+    m_image.load("test.jpg");
+    m_imageSize = m_image.size();
     //initContext(640, 480);
 	initCamera();
 
@@ -173,6 +181,26 @@ void CameraStream::encodeFrame(const QImage &image)
 {
     AVFrame *frame = av_frame_alloc();
 
+    frame->width = image.width();
+    frame->height = image.height();
+    frame->format = AV_PIX_FMT_YUV420P;
+    frame->pict_type = AV_PICTURE_TYPE_I;
+
+    YUVImage im;
+    im.createFromQImage(image);
+
+    frame->linesize[0] = im.Y.size();
+    frame->linesize[1] = im.U.size();
+    frame->linesize[2] = im.V.size();
+
+    frame->data[0] = (uint8_t*)av_malloc(im.Y.size());
+    frame->data[1] = (uint8_t*)av_malloc(im.U.size());
+    frame->data[2] = (uint8_t*)av_malloc(im.V.size());
+
+    std::copy_n(im.Y.data(), im.Y.size(), frame->data[0]);
+    std::copy_n(im.U.data(), im.U.size(), frame->data[1]);
+    std::copy_n(im.V.data(), im.V.size(), frame->data[2]);
+
     int res = 0;
     do{
         res = avcodec_send_frame(m_fmt, frame);
@@ -191,6 +219,10 @@ void CameraStream::encodeFrame(const QImage &image)
 
         av_packet_unref(&pkt);
     }
+
+//    frame->data[0] = nullptr;
+//    frame->data[1] = nullptr;
+//    frame->data[2] = nullptr;
 
     av_frame_free(&frame);
 }

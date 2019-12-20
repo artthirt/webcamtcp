@@ -44,6 +44,7 @@ private:
 	VideoSurface *m_videoSurface;
 	uint m_numImage;
 	QSize m_imageSize;
+    QImage m_image;
 
     uint m_max_frames = 25;
     std::queue< QImage > m_frames;

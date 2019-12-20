@@ -35,6 +35,8 @@ public:
 
     void save(const QString& fn){}
 
+    void createFromQImage(const QImage& image);
+
     std::vector<uchar> Y;
     std::vector<uchar> U;
     std::vector<uchar> V;

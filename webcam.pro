@@ -11,7 +11,8 @@ SOURCES += \
         tcpserver.cpp \
         tcpsocket.cpp \
         testsender.cpp \
-        videosurface.cpp
+        videosurface.cpp \
+    common.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,5 +30,12 @@ HEADERS += \
 #!win32{
 #    LIBS += -lx264
 #}
+
+win32{
+    QMAKE_CXXFLAGS += /openmp
+}else{
+    QMAKE_CXXFLAGS += -fopenmp
+    LIBS += -lgomp
+}
 
 include(ffmpeg/ffmpeg.pri)
