@@ -100,6 +100,11 @@ void CameraStream::initContext(int width, int height)
 	if(!m_codec)
 		return;
 
+	if(m_fmt){
+		avcodec_free_context(&m_fmt);
+		m_fmt = nullptr;
+	}
+
 	m_fmt = avcodec_alloc_context3(m_codec);
 	m_fmt->codec_type = AVMEDIA_TYPE_VIDEO;
 	m_fmt->codec_id = m_codec->id;
