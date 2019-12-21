@@ -72,14 +72,14 @@ void CameraStream::onSendImage(const QImage &image)
 
 void CameraStream::onTimeout()
 {
-	printf("image #%d %dx%d               \r", m_numImage, m_imageSize.width(), m_imageSize.height());
+	//printf("image #%d %dx%d               \r", m_numImage, m_imageSize.width(), m_imageSize.height());
 	if(!m_isInitAV){
 		if(!m_imageSize.isEmpty()){
 			initContext(m_imageSize.width(), m_imageSize.height());
 			m_isInitAV = true;
 		}
 	}
-    onSendImage(m_image);
+	//onSendImage(m_image);
 }
 
 void CameraStream::stateChanged(QCamera::State state)
