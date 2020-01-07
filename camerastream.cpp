@@ -135,7 +135,8 @@ void CameraStream::initContext(int width, int height)
 //	m_fmt->codec_type = AVMEDIA_TYPE_VIDEO;
 //	m_fmt->codec_id = m_codec->id;
 //	m_fmt->bit_rate = 10000000;
-//    m_fmt->flags2 |= AV_CODEC_FLAG2_FAST;
+	m_fmt->flags |= AV_CODEC_FLAG_LOW_DELAY;
+	m_fmt->flags2 |= AV_CODEC_FLAG2_FAST;
     m_fmt->time_base = {1, 60};
     m_fmt->gop_size = 3;
     m_fmt->keyint_min = 1;
@@ -148,9 +149,14 @@ void CameraStream::initContext(int width, int height)
 
 	AVDictionary *dict = nullptr;
 	av_dict_set(&dict, "b", "10M", 0);
-    av_dict_set(&dict, "pkt_size", "5", 0);
+	av_dict_set(&dict, "pkt_size", "0", 0);
     //av_dict_set(&dict, "r", "25", 0);
 	av_dict_set(&dict, "c", "v", 0);
+	av_dict_set(&dict, "ll", "0", 0);
+	av_dict_set(&dict, "llhq", "0", 0);
+	av_dict_set(&dict, "llhp", "0", 0);
+	av_dict_set(&dict, "preset", "ultrafast", 0);
+	av_dict_set(&dict, "tune", "zerolatency", 0);
     //av_dict_set(&dict, "scale", QString("%1:%2").arg(width).arg(height).toLatin1().data(), 0);
 	int res = 0;
     if((res = avcodec_open2(m_fmt, m_codec, &dict)) < 0){
